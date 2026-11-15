@@ -1,0 +1,119 @@
+column,group,unit,label,what_it_is
+date,Price,YYYY-MM-DD,Session,The trading session the chain was captured for (after the close).
+close,Price,$,Close,"Daily close, Daily price file. Where the price file has no bar for one of the newest sessions yet, the option chain's own price (see bar_from_chain); blank where it has none for an older one."
+spot,Price,$,Chain spot,"The underlying price the option chain was priced on — NOT split-adjusted, so it is in the same money as the strikes below. For a future: the price of the ONE contract month the series follows (the month that holds the option open interest), which can differ from the front-month close beside it."
+split_factor,Price,ratio,Split factor,"Close ÷ chain spot as a level, held at exactly 1 unless a stock split separates the two (e.g. 0.25 before a 4:1 split). Multiply any strike level by it to draw it on the split-adjusted price chart. A session whose chain price disagrees with this level is flagged (`chain_flag` 4), not explained as a split. Blank for futures."
+iv30,Implied volatility,decimal,IV 30d,"At-the-money implied volatility at a constant 30 days, interpolated across expiries. 0.25 = 25 %. The headline IV number. Blank where the expiries around 30 days have no usable quote — most of 2008–2009, when the vendor's IV is its failed-solve value."
+iv10,Implied volatility,decimal,IV 10d,"Constant-maturity ATM IV, 10 days."
+iv20,Implied volatility,decimal,IV 20d,"Constant-maturity ATM IV, 20 days."
+iv60,Implied volatility,decimal,IV 60d,"Constant-maturity ATM IV, 60 days."
+iv90,Implied volatility,decimal,IV 90d,"Constant-maturity ATM IV, 90 days."
+iv180,Implied volatility,decimal,IV 180d,"Constant-maturity ATM IV, 180 days."
+iv_rank_1y,Implied volatility,0-100,IV rank (1y),"Where today's IV 30d sits between its lowest (0) and highest (100) value of the last 252 sessions, today included. Blank until 126 sessions exist."
+iv_pctl_1y,Implied volatility,%,IV percentile (1y),Share of the previous 252 sessions whose IV 30d was BELOW today's. Less sensitive to one spike than IV rank.
+hv20,Implied volatility,decimal,Realised vol 20d,Historical (realised) volatility: annualised standard deviation of the last 20 daily log returns of the close.
+iv_hv_spread,Implied volatility,decimal,IV − HV,IV 30d minus realised vol 20d. Positive = options price more movement than the stock has been delivering (premium is rich against the recent tape).
+term_slope,Implied volatility,decimal,Term slope 90−30,"IV 90d − IV 30d. Negative = backwardation: the near term is priced as more dangerous than the far (stress, an event ahead)."
+term_slope_short,Implied volatility,decimal,Term slope 60−10,"IV 60d − IV 10d, the short end of the curve."
+skew25,Implied volatility,decimal,25Δ skew 30d,25-delta put IV − 25-delta call IV at 30 days. Positive = puts cost more than calls (demand for downside protection).
+front_atm_iv,Implied volatility,decimal,Front ATM IV,ATM IV of the nearest live expiry (jumps around earnings and at roll).
+front_skew25,Implied volatility,decimal,Front 25Δ skew,25Δ put − call IV on the nearest expiry.
+exp_move_30d,Implied volatility,$,Expected move 30d,"One-standard-deviation move the options price over 30 days, in dollars of spot (spot × IV30 × √(30/365))."
+exp_move_30d_pct,Implied volatility,%,Expected move 30d %,The same move as a percent of spot.
+call_oi,Open interest & volume,contracts,Call OI,"Call open interest, all live expiries (the contracts expiring that day are left out — see `oi_0dte_share`). As published that session = positions at the PREVIOUS session's close (OCC publishes overnight)."
+put_oi,Open interest & volume,contracts,Put OI,"Put open interest, same basis as call OI."
+total_oi,Open interest & volume,contracts,Total OI,Call + put open interest.
+call_oi_chg,Open interest & volume,contracts,Call OI change,Daily OI flow: call OI minus the previous session's figure — the net call contracts opened (+) or closed (−). Because OI is published overnight this is mostly the PREVIOUS session's trading. Drops on expiry days include contracts that simply expired. Blank across a gap of more than 5 calendar days.
+put_oi_chg,Open interest & volume,contracts,Put OI change,"Daily OI flow for puts, same rules as call OI change."
+total_oi_chg,Open interest & volume,contracts,Total OI change,Call + put OI change.
+call_vol,Open interest & volume,contracts,Call volume,"Call contracts traded this session, every expiry — the contracts expiring that day included (on an index ETF they are most of the day)."
+put_vol,Open interest & volume,contracts,Put volume,"Put contracts traded this session, every expiry, same-day expiries included."
+total_vol,Open interest & volume,contracts,Total option volume,"All option contracts traded this session: call volume + put volume, same-day expiries included."
+rel_vol_20,Open interest & volume,ratio,Relative option volume,"Total option volume ÷ its average over the previous 20 usable sessions. 1 = normal, 3 = three times normal (""unusual activity"")."
+pc_oi_ratio,Open interest & volume,ratio,Put/call OI ratio,Put OI ÷ call OI.
+pc_vol_ratio,Open interest & volume,ratio,Put/call volume ratio,"Put volume ÷ call volume, all contracts traded."
+put_share_oi,Open interest & volume,%,Put share of OI,Puts as a percent of all OI — the bounded form of the P/C ratio (50 = balanced).
+vol_oi_ratio,Open interest & volume,ratio,Turnover,"Volume ÷ open interest, both over every contract (same-day expiries included): how fast the book is turning over."
+call_premium,Open interest & volume,$,Call premium traded,"Σ mid × volume × 100 over calls: dollars spent on calls this session, priced at the closing mid. The contracts expiring that day are NOT in it: at the close their mid is what is left of them, not what they traded at."
+put_premium,Open interest & volume,$,Put premium traded,"Dollars spent on puts this session, same basis as call premium (closing mid, same-day expiries left out)."
+net_premium,Open interest & volume,$,Net premium,Call premium − put premium. Positive = more money went through calls.
+delta_flow,Open interest & volume,$,Delta-weighted volume,"Σ delta × volume × 100 × spot, at the closing delta, over the live expiries (a contract expiring that day closes at a delta of 0 or 1, which says where the price ended, not which way it traded): the share-equivalent dollars of the day's option trading. Positive = the trading leaned long delta (calls at their delta outweighed puts at theirs). Does not know buyer from seller."
+near_oi_share,Open interest & volume,%,OI within 45 days,Percent of open interest expiring within 45 days.
+front_oi_share,Open interest & volume,%,OI in the front expiry,Percent of open interest in the nearest live expiry.
+oi_0dte_share,Open interest & volume,%,0DTE share of OI,"Percent of OI in contracts expiring that day. Those positions are gone by the next morning, so open interest, the greeks (GEX, DEX, VEX, CHEX), the walls, max pain, premium and delta flow leave them out; the volume columns count them."
+gex,Dealer positioning (greeks),$ per 1% move,Dealer gamma (GEX),"Dealer gamma exposure, dollars of hedging per 1 % move, assuming dealers are long calls and short puts. Positive = dealers dampen moves (sell rallies, buy dips); negative = they amplify them. It is the slope AT the close: when the gamma flip is nearer than 1 %, a full 1 % move hedges less than this number."
+gex_0_14d,Dealer positioning (greeks),$ per 1% move,GEX 0–14 days,The same gamma from expiries 0–14 days out only — the short-dated gamma that moves the tape.
+gex_per_oi,Dealer positioning (greeks),$ per contract,GEX per contract,"GEX ÷ total OI: gamma with the size of the book divided out, comparable across time."
+gamma_regime,Dealer positioning (greeks),+1 / −1,Gamma regime,"+1 when repriced dealer gamma at spot is positive (long-gamma, dampened), −1 when negative (short-gamma, amplified)."
+gamma_flip,Levels (strikes),$ (strike),Gamma flip,The spot price at which dealer gamma changes sign (repriced). Above it = long-gamma territory.
+spot_vs_flip_pct,Dealer positioning (greeks),%,Spot vs gamma flip,(spot − flip) ÷ spot. Positive = spot above the flip.
+dex,Dealer positioning (greeks),$,Delta exposure (DEX),"Book delta in dollars (calls + puts, delta × OI × 100 × spot)."
+vanna,Dealer positioning (greeks),shares per vol point,Dealer vanna (shares),"Dealer vanna (calls − puts): how dealers' delta changes when IV moves one point, in shares of the underlying. Positive: falling IV makes dealers buy. In dollars this is the column `vex`."
+charm,Dealer positioning (greeks),shares per day,Dealer charm (shares),"Dealer charm (calls − puts): how dealers' delta changes as one calendar day passes, in shares of the underlying. NEGATIVE (the usual state): the options' delta decays, so the passing days make dealers BUY shares back; positive: time makes them sell. In dollars this is the column `chex`."
+vega,Dealer positioning (greeks),$ per vol point,Book vega,Dollar vega of all open interest: what a one-point IV move is worth to the book.
+call_wall,Levels (strikes),$ (strike),Call wall,"The strike at or above spot with the most call OI, counted over EVERY live expiry — read as resistance. Long-dated positions count as much as this week's, so it can sit far above the price (more than 25 % away on about 1 session in 7): `call_wall_pct` says how far, and the walls by horizon (`call_wall_0_14d`, `call_wall_15_45d`) are the ones near the price."
+call_wall_oi,Levels (strikes),contracts,Call wall OI,Open interest at the call wall.
+call_wall_2,Levels (strikes),$ (strike),Call wall 2,The next-biggest call-OI strike above the call wall.
+put_wall,Levels (strikes),$ (strike),Put wall,"The strike at or below spot with the most put OI, counted over EVERY live expiry — read as support. Far crash hedges count as much as this week's puts, so it can sit far below the price (more than 25 % away on about 1 session in 5; SPY's sits a median 21 % below): `put_wall_pct` says how far, and the walls by horizon (`put_wall_0_14d`, `put_wall_15_45d`) are the ones near the price."
+put_wall_oi,Levels (strikes),contracts,Put wall OI,Open interest at the put wall.
+put_wall_2,Levels (strikes),$ (strike),Put wall 2,The next-biggest put-OI strike below the put wall.
+gamma_wall_up,Levels (strikes),$ (strike),Gamma wall above,Strike at or above spot with the largest net dealer gamma.
+gamma_wall_down,Levels (strikes),$ (strike),Gamma wall below,Strike at or below spot with the most negative net dealer gamma.
+max_pain_front,Levels (strikes),$ (strike),Max pain (front),Strike where option holders of the nearest expiry lose the most at expiry.
+max_pain_monthly,Levels (strikes),$ (strike),Max pain (monthly),Max pain of the nearest standard monthly expiry (the third Friday — listed as the Saturday after it before 2015) at least 7 days out.
+call_wall_pct,Levels (strikes),%,Distance to call wall,(call wall − spot) ÷ spot.
+put_wall_pct,Levels (strikes),%,Distance to put wall,(spot − put wall) ÷ spot.
+max_pain_front_pct,Levels (strikes),%,Max pain vs spot,(front max pain − spot) ÷ spot. Positive = the pin sits above spot.
+chain_grade,Chain quality,A–F,Chain grade,"The data-trust grade of this session's chain (A best), from its quotes: spreads, crossed markets, missing IV. Filter studies on it: before 2010 the vendor's IV is unreliable and few sessions grade A. It does not see a repeated or partial capture — `chain_flag` does."
+chain_score,Chain quality,0-100,Chain score,The 0–100 score behind the grade.
+chain_flag,Chain quality,0–5,Capture flag,"0 = a normal session. 1 to 4 = the chain captured that session is not a usable picture of the book, so EVERY option-market cell of the row is left blank (the price cells stay) and the row is skipped by the rolling columns: 1 = partial capture (under half the usual contracts) · 2 = the previous session's capture served again (same spot, open interest and volume to the contract) · 3 = a one-day jump in open interest, gone the next day · 4 = the chain's underlying price is more than 5 % away from the day's close, or its open interest sits nowhere near that price (strikes and price in different money — a split day, a vendor price error). 5 = the contracts that expired that day are missing from the capture: only the volume cells (call, put and total volume, the put/call volume ratio, relative volume, turnover) are blank, the rest of the row is good."
+expiries,Chain quality,n,Live expiries,Number of live expiries in the chain that session.
+strikes,Chain quality,n,Distinct strikes,Number of distinct live strikes.
+gex_15_45d,Dealer positioning (greeks),$ per 1% move,GEX 15–45 days,Dealer gamma from the expiries 15–45 days out — the monthly cycle.
+gex_46_180d,Dealer positioning (greeks),$ per 1% move,GEX 46–180 days,Dealer gamma from the expiries 46–180 days out.
+gex_181d_plus,Dealer positioning (greeks),$ per 1% move,GEX 181+ days,"Dealer gamma from the expiries more than 180 days out (LEAPS): large in dollars, slow to re-hedge. The four horizons add up to GEX."
+vanna_0_14d,Dealer positioning (greeks),shares per vol point,Vanna 0–14 days (shares),"Dealer vanna from the expiries inside 14 days only, in shares. In dollars: `vex_0_14d`."
+charm_0_14d,Dealer positioning (greeks),shares per day,Charm 0–14 days (shares),Dealer charm from the expiries inside 14 days — the hedging the passing days force into an expiry week — in shares. In dollars: `chex_0_14d`.
+spot_vs_delta_flip_pct,Dealer positioning (greeks),%,Spot vs delta flip,(spot − delta flip) ÷ spot. Positive = spot above the delta flip.
+delta_tilt,Dealer positioning (greeks),−1…+1,δ tilt near spot,"Mean call delta + mean put delta, weighted by open interest, over the strikes within ±5 % of spot (the put keeps its minus sign). Above zero = the contracts near the money lean long."
+delta_net_near,Dealer positioning (greeks),$,Net δ$ near spot,"Σ delta × OI × 100 × spot over the strikes within ±5 % of spot, calls plus puts. It grows with the size of the book — the share in the next column divides that out."
+delta_share_near,Dealer positioning (greeks),−1…+1,δ$ share near spot,"Net δ$ ÷ total |δ$| within ±5 % of spot: −1 = all put, +1 = all call. Does not move when the book simply gets bigger."
+adj_atm_pct,Call side vs put side,%,ATM call vs put,"The call against the put at the two strikes around spot, nearest expiry, each repriced to the same distance from spot; percent of the cheaper one, + = the call costs more. At the money this is mostly the carry (interest − dividend − borrow), not a view."
+adj_net_dollar,Call side vs put side,$,"Call − put, in dollars","Σ (call − put) over every pair of strikes at equal distance from spot within ±25 %, every live expiry. + = the call side costs more. A raw sum: it grows with the stock price, the interest rate and the number of long-dated expiries."
+adj_net_rungs,Call side vs put side,pairs,"Call − put, by count","Pairs where the call costs more minus pairs where the put does — how WIDELY one side is dearer, one vote per pair however thin."
+delta_price25,Call side vs put side,%,"Price of delta, 25Δ (30d)","What the 25-delta call costs against the 25-delta put at 30 days, percent of the cheaper one: + = the call's delta is dearer, − = the put's. Its resting value is NOT zero — with no skew at all it reads several percent put-dear, more when IV is high — so read the next column for the skew itself."
+delta_price25_skew,Call side vs put side,points,Price of delta over its floor,"The column before minus what a smile with no skew would read, in points. Below zero = puts are bid beyond the plain geometry; above zero = calls are. The dollar companion of the 25Δ skew."
+delta_flip,Levels (strikes),$ (strike),Delta flip,The spot price at which the delta of the whole book (repriced) crosses zero.
+call_wall_3,Levels (strikes),$ (strike),Call wall 3,The third call-OI strike above spot.
+put_wall_3,Levels (strikes),$ (strike),Put wall 3,The third put-OI strike below spot.
+call_oi_peak,Levels (strikes),$ (strike),Call OI peak,"The strike with the most call OI anywhere, spot ignored. When it sits BELOW spot, price has run over the biggest call strike."
+put_oi_peak,Levels (strikes),$ (strike),Put OI peak,"The strike with the most put OI anywhere, spot ignored. When it sits ABOVE spot, price has fallen through the biggest put strike."
+max_pain_all,Levels (strikes),$ (strike),Max pain (all expiries),Max pain over every live expiry blended.
+call_wall_0_14d,Levels (strikes),$ (strike),Call wall 0–14 days,The call wall of the expiries inside 14 days only — the wall that matters this week and next.
+put_wall_0_14d,Levels (strikes),$ (strike),Put wall 0–14 days,The put wall of the expiries inside 14 days only.
+max_pain_0_14d,Levels (strikes),$ (strike),Max pain 0–14 days,"Max pain of the expiries inside 14 days, blended."
+call_wall_15_45d,Levels (strikes),$ (strike),Call wall 15–45 days,The call wall of the expiries 15–45 days out — the monthly cycle.
+put_wall_15_45d,Levels (strikes),$ (strike),Put wall 15–45 days,The put wall of the expiries 15–45 days out.
+max_pain_15_45d,Levels (strikes),$ (strike),Max pain 15–45 days,"Max pain of the expiries 15–45 days out, blended."
+call_wall_46_180d,Levels (strikes),$ (strike),Call wall 46–180 days,The call wall of the expiries 46–180 days out.
+put_wall_46_180d,Levels (strikes),$ (strike),Put wall 46–180 days,The put wall of the expiries 46–180 days out.
+max_pain_46_180d,Levels (strikes),$ (strike),Max pain 46–180 days,"Max pain of the expiries 46–180 days out, blended."
+exp_move_front,Implied volatility,$,Expected move to the front expiry,"One-standard-deviation move the options price between now and the nearest expiry, in dollars of spot, at that expiry's own ATM IV."
+front_dte,Implied volatility,days,Days to the front expiry,Calendar days to the nearest live expiry — the horizon of the column before.
+vex,Dealer positioning (greeks),$ per vol point,Vanna exposure (VEX),"Dealer vanna in dollars: the stock dealers have to trade when implied volatility moves ONE point, assuming dealers are long calls and short puts (Σ vanna × OI × 100 × spot, calls − puts). It is the change in the dealers' option delta, so they trade the opposite way: positive = rising IV makes dealers sell and falling IV makes them buy; negative = the reverse."
+chex,Dealer positioning (greeks),$ per day,Charm exposure (CHEX),"Dealer charm in dollars: the stock dealers have to trade as ONE calendar day passes with price and IV unchanged (Σ charm × OI × 100 × spot, calls − puts). It is the change in the dealers' option delta, so they trade the opposite way: NEGATIVE (the usual state) = the passing of time makes dealers BUY that many dollars of stock; positive = it makes them sell. Largest in the days before an expiry."
+vex_0_14d,Dealer positioning (greeks),$ per vol point,VEX 0–14 days,Vanna exposure of the expiries inside 14 days only.
+chex_0_14d,Dealer positioning (greeks),$ per day,CHEX 0–14 days,Charm exposure of the expiries inside 14 days only — the hedging the passing days force into an expiry week. This is where most of the charm lives.
+vex_15_45d,Dealer positioning (greeks),$ per vol point,VEX 15–45 days,Vanna exposure of the expiries 15–45 days out — the monthly cycle.
+chex_15_45d,Dealer positioning (greeks),$ per day,CHEX 15–45 days,Charm exposure of the expiries 15–45 days out.
+vex_46_180d,Dealer positioning (greeks),$ per vol point,VEX 46–180 days,Vanna exposure of the expiries 46–180 days out.
+chex_46_180d,Dealer positioning (greeks),$ per day,CHEX 46–180 days,Charm exposure of the expiries 46–180 days out.
+call_wall_near,Levels (strikes),$ (strike),Call wall (near),"The strike at or above spot with the most call OI among the strikes within 25 % of the price (the strike table's own window) — the same rule as `call_wall`, without the far strikes. Where the whole-book call wall is within 25 % the two are the same strike; where it is not, `call_wall` is a far position (a long-dated bet or hedge) and this is the wall the price meets first. The site's pages draw this one."
+call_wall_near_oi,Levels (strikes),contracts,Call wall (near) OI,Open interest at the near call wall.
+call_wall_near_pct,Levels (strikes),%,Distance to the near call wall,(near call wall − spot) ÷ spot. Never more than 25.
+call_wall_near_2,Levels (strikes),$ (strike),Call wall 2 (near),"The next-biggest call-OI strike above the near call wall, within 25 % of the price."
+put_wall_near,Levels (strikes),$ (strike),Put wall (near),"The strike at or below spot with the most put OI among the strikes within 25 % of the price — the same rule as `put_wall`, without the far crash hedges. Where the whole-book put wall is within 25 % the two are the same strike. The site's pages draw this one."
+put_wall_near_oi,Levels (strikes),contracts,Put wall (near) OI,Open interest at the near put wall.
+put_wall_near_pct,Levels (strikes),%,Distance to the near put wall,(spot − near put wall) ÷ spot. Never more than 25.
+put_wall_near_2,Levels (strikes),$ (strike),Put wall 2 (near),"The next-biggest put-OI strike below the near put wall, within 25 % of the price."
+bar_from_chain,Price,1 or blank,Close from the chain,"1 = the Daily price file had no bar for this session yet (the vendor's prices arrive later than the chain), so open, high, low and close are the option chain's own underlying price (× split_factor) and volume is blank. Only the newest sessions get one, at most 10, and only on a usable capture; never on a future (its chain is priced on the contract month that holds the options, not the front month of the price file). The night the real bar arrives it replaces this one. Blank on every other session."
