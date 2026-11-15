@@ -18,7 +18,7 @@ Last session in this copy: **2026-11-13**. Refreshed every week.
 | `data/<TICKER>.csv` | the daily option series, one row per session, oldest first (`date` = YYYY-MM-DD) |
 | `index.csv` | ticker, name, first and last session, number of sessions |
 | `columns.csv` | every column: group, unit, label, what it is |
-| `quickstart.ipynb` · `quickstart.py` | load, put the levels on the price scale, a first look |
+| `quickstart.ipynb` · `quickstart.py` | load, put the levels on the price scale, gamma regime vs next-day moves (with an IV control) |
 
 | Ticker | Name | From | Sessions |
 |---|---|---|---:|
